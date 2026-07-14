@@ -3,16 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acesso Restrito</title>
+    <title>Gift Cards - Validador</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background-color: #f4f4f4; }
         .card { background: white; padding: 20px; border-radius: 10px; max-width: 400px; margin: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         input, button, select { width: 100%; padding: 12px; margin-top: 10px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
         button { background-color: #007bff; color: white; cursor: pointer; border: none; }
-        #conteudoSite { display: none; }
-        .ver-senha { text-align: left; font-size: 14px; margin-top: 5px; cursor: pointer; }
-        #pixArea { margin-top: 20px; padding: 15px; background: #e9ecef; border: 2px dashed #28a745; display: none; }
-        .btn-copiar { background-color: #28a745; margin-top: 10px; }
+        #conteudoSite, #confirmarArea, #resultadoFinal { display: none; }
+        .pix-box { margin-top: 20px; padding: 15px; background: #e9ecef; border: 2px dashed #28a745; }
     </style>
 </head>
 <body>
@@ -21,84 +19,75 @@
     <h2>Login Obrigatório</h2>
     <input type="text" id="usuarioInput" placeholder="Usuário">
     <input type="password" id="senhaInput" placeholder="Senha">
-    <div class="ver-senha">
-        <input type="checkbox" onclick="toggleSenha()"> Mostrar senha
-    </div>
     <button onclick="verificarLogin()">Entrar</button>
 </div>
 
 <div id="conteudoSite" class="card">
     <h1>Gift Cards</h1>
-    <label>Serviço:</label>
-    <select id="servico">
-        <option value="iFood">iFood</option>
-        <option value="Play Store">Google Play Store</option>
-        <option value="Roblox">Roblox</option>
-        <option value="Shopee">Shopee</option>
-        <option value="Amazon">Amazon</option>
-        <option value="PayPal">PayPal</option>
-    </select>
+    <select id="servico"><option>iFood</option><option>Play Store</option><option>Roblox</option></select>
+    <input type="number" id="valor" placeholder="Valor (50 a 1000)" oninput="calcular()">
+    <p>Total a pagar: <b>R$ <span id="precoFinal">0,00</span></b></p>
+    <button onclick="mostrarPix()">Gerar Pagamento</button>
 
-    <label>Valor do saldo (R$ 50 a R$ 1000):</label>
-    <input type="number" id="valor" min="50" max="1000" placeholder="Ex: 100" oninput="calcular()">
-    
-    <p>Total a pagar (75%): <b>R$ <span id="precoFinal">0,00</span></b></p>
-    
-    <button onclick="gerarPagamento()">Gerar Pagamento</button>
-
-    <div id="pixArea">
-        <p>Use a chave abaixo para pagar:</p>
-        <code id="chavePix" style="font-weight:bold; word-break: break-all;">3d998e47-86c4-4e63-9591-9d8ac218b56a</code>
-        <button class="btn-copiar" onclick="copiarChave()">Copiar Chave Pix</button>
+    <div id="pixArea" class="pix-box" style="display:none;">
+        <p>Chave: <code>3d998e47-86c4-4e63-9591-9d8ac218b56a</code></p>
+        <button onclick="abrirConfirmacao()">Já paguei, quero meu código</button>
     </div>
 </div>
 
+<div id="confirmarArea" class="card">
+    <h2>Confirmar Pagamento</h2>
+    <input type="number" id="valorPago" placeholder="Confirme o valor pago">
+    <input type="password" id="senhaLiberacao" placeholder="Senha de Liberação">
+    <button onclick="liberarCodigo()">Verificar e Receber</button>
+</div>
+
+<div id="resultadoFinal" class="card">
+    <h2>Resultado</h2>
+    <p id="mensagemFinal"></p>
+    <h2 id="codigoGerado" style="color: #28a745;"></h2>
+    <button onclick="location.reload()">Nova Compra</button>
+</div>
+
 <script>
-    function toggleSenha() {
-        var x = document.getElementById("senhaInput");
-        x.type = (x.type === "password") ? "text" : "password";
-    }
+    // SENHA DE LIBERAÇÃO ATUALIZADA PARA: keven12
+    const senhaPagamento = "keven12";
 
     function verificarLogin() {
         if (document.getElementById('usuarioInput').value === "keven12" && document.getElementById('senhaInput').value === "140124") {
             document.getElementById('telaLogin').style.display = 'none';
             document.getElementById('conteudoSite').style.display = 'block';
-        } else {
-            alert("Usuário ou senha incorretos!");
-        }
+        } else { alert("Dados incorretos!"); }
     }
 
     function calcular() {
-        var input = document.getElementById('valor');
-        var valor = parseFloat(input.value);
-        if (valor > 1000) { valor = 1000; input.value = 1000; }
+        var v = document.getElementById('valor').value;
+        document.getElementById('precoFinal').innerText = v >= 50 ? (v * 0.75).toFixed(2).replace('.', ',') : "0,00";
+    }
+
+    function mostrarPix() { document.getElementById('pixArea').style.display = 'block'; }
+    function abrirConfirmacao() { 
+        document.getElementById('conteudoSite').style.display = 'none'; 
+        document.getElementById('confirmarArea').style.display = 'block'; 
+    }
+
+    function liberarCodigo() {
+        var valorPago = document.getElementById('valorPago').value;
+        var senhaDigitada = document.getElementById('senhaLiberacao').value;
+        var valorEsperado = (document.getElementById('valor').value * 0.75).toFixed(2);
         
-        if (valor >= 50) {
-            var preco = valor * 0.75;
-            document.getElementById('precoFinal').innerText = preco.toFixed(2).replace('.', ',');
-        } else {
-            document.getElementById('precoFinal').innerText = "0,00";
-        }
-    }
+        document.getElementById('confirmarArea').style.display = 'none';
+        document.getElementById('resultadoFinal').style.display = 'block';
 
-    function gerarPagamento() {
-        var valor = parseFloat(document.getElementById('valor').value);
-        if (isNaN(valor) || valor < 50) {
-            alert("O valor mínimo para compra é R$ 50,00.");
+        if (parseFloat(valorPago).toFixed(2) === valorEsperado && senhaDigitada === senhaPagamento) {
+            var cod = 'GIFT-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+            document.getElementById('mensagemFinal').innerText = "Pagamento confirmado! Seu código:";
+            document.getElementById('codigoGerado').innerText = cod;
         } else {
-            document.getElementById('pixArea').style.display = 'block';
+            document.getElementById('mensagemFinal').innerText = "Pagamento INVÁLIDO ou não localizado.";
+            document.getElementById('codigoGerado').innerText = "❌";
         }
-    }
-
-    function copiarChave() {
-        var texto = document.getElementById("chavePix").innerText;
-        navigator.clipboard.writeText(texto).then(function() {
-            alert("Chave Pix copiada com sucesso!");
-        }, function() {
-            alert("Erro ao copiar. Tente selecionar e copiar manualmente.");
-        });
     }
 </script>
-
 </body>
 </html>

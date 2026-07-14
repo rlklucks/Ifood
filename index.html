@@ -3,113 +3,113 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gift Cards - Área do Cliente</title>
+    <title>Painel de Resgate</title>
     <style>
-        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background-color: #f4f4f4; }
-        .card { background: white; padding: 20px; border-radius: 10px; max-width: 400px; margin: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        input, button, select { width: 100%; padding: 12px; margin-top: 10px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
-        button { background-color: #007bff; color: white; cursor: pointer; border: none; }
-        #conteudoSite, #confirmarArea, #resultadoFinal { display: none; }
-        .ver-senha { text-align: left; font-size: 14px; margin-top: 5px; cursor: pointer; }
-        .pix-box { margin-top: 20px; padding: 15px; background: #e9ecef; border: 2px dashed #28a745; display: none; }
-        .btn-copiar { background-color: #28a745; margin-top: 10px; }
+        :root { --primary: #6366f1; --bg: #f8fafc; --card: #ffffff; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); margin: 0; padding: 20px; color: #1e293b; }
+        .container { max-width: 450px; margin: auto; }
+        .card { background: var(--card); padding: 30px; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.05); }
+        h2 { text-align: center; color: var(--primary); }
+        input, select, button { width: 100%; padding: 14px; margin-top: 15px; border-radius: 12px; border: 1px solid #e2e8f0; font-size: 16px; box-sizing: border-box; }
+        button { background-color: var(--primary); color: white; font-weight: bold; border: none; cursor: pointer; transition: 0.3s; }
+        button:hover { opacity: 0.9; transform: translateY(-2px); }
+        .hidden { display: none; }
+        .pix-box { background: #f1f5f9; padding: 20px; border-radius: 15px; border: 2px dashed var(--primary); text-align: center; }
+        .code-box { font-size: 24px; font-weight: bold; color: var(--primary); margin: 20px 0; letter-spacing: 2px; }
     </style>
 </head>
 <body>
 
-<div id="telaLogin" class="card">
-    <h2>Login Obrigatório</h2>
-    <input type="text" id="usuarioInput" placeholder="Usuário">
-    <input type="password" id="senhaInput" placeholder="Senha">
-    <div class="ver-senha"><input type="checkbox" onclick="toggleSenha('senhaInput')"> Mostrar senha</div>
-    <button onclick="verificarLogin()">Entrar</button>
-</div>
+<div class="container">
+    <div id="telaLogin" class="card">
+        <h2>Acesso ao Painel</h2>
+        <input type="text" id="usuarioInput" placeholder="Usuário">
+        <input type="password" id="senhaInput" placeholder="Senha">
+        <button onclick="verificarLogin()">Entrar</button>
+    </div>
 
-<div id="conteudoSite" class="card">
-    <h1>Gift Cards</h1>
-    <label>Serviço:</label>
-    <select id="servico"><option>iFood</option><option>Play Store</option><option>Roblox</option><option>Shopee</option></select>
-    
-    <label>Valor do saldo (R$ 50 a R$ 1000):</label>
-    <input type="number" id="valor" min="50" max="1000" placeholder="Ex: 100" oninput="calcular()">
-    <p>Total a pagar (75%): <b>R$ <span id="precoFinal">0,00</span></b></p>
-    
-    <button onclick="mostrarPix()">Gerar Pagamento</button>
+    <div id="conteudoSite" class="card hidden">
+        <h2>Gift Cards Disponíveis</h2>
+        <select id="servico">
+            <option>iFood</option><option>Google Play Store</option><option>Roblox</option>
+            <option>Shopee</option><option>Amazon</option><option>PayPal</option>
+            <option>Steam</option><option>Netflix</option><option>Uber</option>
+        </select>
+        <input type="number" id="valor" min="50" max="1000" placeholder="Valor do saldo (R$ 50 - R$ 1000)" oninput="calcular()">
+        <p>Total para pagamento (75%): <b>R$ <span id="precoFinal">0,00</span></b></p>
+        <button onclick="mostrarPix()">Gerar Pagamento</button>
+    </div>
 
-    <div id="pixArea" class="pix-box">
-        <p>Use a chave abaixo para pagar:</p>
-        <code id="chavePix" style="font-weight:bold; word-break: break-all;">3d998e47-86c4-4e63-9591-9d8ac218b56a</code>
-        <button class="btn-copiar" onclick="copiarChave()">Copiar Chave Pix</button>
-        <button onclick="abrirConfirmacao()">Já paguei, quero meu código</button>
+    <div id="pixArea" class="card hidden" style="margin-top:20px">
+        <div class="pix-box">
+            <p>Copie a chave abaixo:</p>
+            <code id="chavePix" style="font-weight:bold;">3d998e47-86c4-4e63-9591-9d8ac218b56a</code>
+            <button onclick="copiarChave()" style="background:#10b981">Copiar Chave</button>
+            <button onclick="abrirConfirmacao()" style="background:#64748b">Já paguei, liberar código</button>
+        </div>
+    </div>
+
+    <div id="confirmarArea" class="card hidden" style="margin-top:20px">
+        <h2>Liberar Código</h2>
+        <input type="number" id="valorPago" placeholder="Confirme o valor pago">
+        <input type="password" id="senhaLiberacao" placeholder="Senha de Liberação">
+        <button onclick="liberarCodigo()">Confirmar Pagamento</button>
+    </div>
+
+    <div id="resultadoFinal" class="card hidden" style="margin-top:20px">
+        <h2>Resultado</h2>
+        <p id="mensagemFinal"></p>
+        <div id="codigoGerado" class="code-box"></div>
+        <button onclick="voltarParaMenu()">Voltar ao menu</button>
     </div>
 </div>
 
-<div id="confirmarArea" class="card">
-    <h2>Confirmar Pagamento</h2>
-    <input type="number" id="valorPago" placeholder="Confirme o valor pago">
-    <input type="password" id="senhaLiberacao" placeholder="Senha de Liberação">
-    <div class="ver-senha"><input type="checkbox" onclick="toggleSenha('senhaLiberacao')"> Mostrar senha</div>
-    <button onclick="liberarCodigo()">Verificar e Receber</button>
-</div>
-
-<div id="resultadoFinal" class="card">
-    <h2>Resultado</h2>
-    <p id="mensagemFinal"></p>
-    <h2 id="codigoGerado" style="color: #28a745;"></h2>
-    <button onclick="location.reload()">Nova Compra</button>
-</div>
-
 <script>
-    const senhaPagamento = "keven12";
-
-    // Função universal para ver senha
-    function toggleSenha(id) {
-        var x = document.getElementById(id);
-        x.type = (x.type === "password") ? "text" : "password";
-    }
-
     function verificarLogin() {
         if (document.getElementById('usuarioInput').value === "keven12" && document.getElementById('senhaInput').value === "140124") {
-            document.getElementById('telaLogin').style.display = 'none';
-            document.getElementById('conteudoSite').style.display = 'block';
-        } else { alert("Usuário ou senha incorretos!"); }
+            document.getElementById('telaLogin').classList.add('hidden');
+            document.getElementById('conteudoSite').classList.remove('hidden');
+        } else { alert("Dados incorretos!"); }
     }
 
     function calcular() {
-        var input = document.getElementById('valor');
-        var v = parseFloat(input.value);
-        if (v > 1000) { v = 1000; input.value = 1000; }
+        var v = document.getElementById('valor').value;
         document.getElementById('precoFinal').innerText = v >= 50 ? (v * 0.75).toFixed(2).replace('.', ',') : "0,00";
     }
 
-    function mostrarPix() { document.getElementById('pixArea').style.display = 'block'; }
+    function mostrarPix() { document.getElementById('pixArea').classList.remove('hidden'); }
 
     function copiarChave() {
-        navigator.clipboard.writeText(document.getElementById("chavePix").innerText);
+        navigator.clipboard.writeText("3d998e47-86c4-4e63-9591-9d8ac218b56a");
         alert("Chave copiada!");
     }
 
     function abrirConfirmacao() { 
-        document.getElementById('conteudoSite').style.display = 'none'; 
-        document.getElementById('confirmarArea').style.display = 'block'; 
+        document.getElementById('pixArea').classList.add('hidden'); 
+        document.getElementById('confirmarArea').classList.remove('hidden'); 
     }
 
     function liberarCodigo() {
-        var valorPago = document.getElementById('valorPago').value;
-        var senhaDigitada = document.getElementById('senhaLiberacao').value;
-        var valorEsperado = (document.getElementById('valor').value * 0.75).toFixed(2);
+        var vPago = document.getElementById('valorPago').value;
+        var sDigitada = document.getElementById('senhaLiberacao').value;
+        var vEsp = (document.getElementById('valor').value * 0.75).toFixed(2);
         
-        document.getElementById('confirmarArea').style.display = 'none';
-        document.getElementById('resultadoFinal').style.display = 'block';
+        document.getElementById('confirmarArea').classList.add('hidden');
+        document.getElementById('resultadoFinal').classList.remove('hidden');
 
-        if (parseFloat(valorPago).toFixed(2) === valorEsperado && senhaDigitada === senhaPagamento) {
+        if (parseFloat(vPago).toFixed(2) === vEsp && sDigitada === "keven12") {
             var cod = 'GIFT-' + Math.random().toString(36).substr(2, 9).toUpperCase();
-            document.getElementById('mensagemFinal').innerText = "Pagamento confirmado! Seu código:";
+            document.getElementById('mensagemFinal').innerText = "Pagamento aprovado!";
             document.getElementById('codigoGerado').innerText = cod;
         } else {
-            document.getElementById('mensagemFinal').innerText = "Pagamento INVÁLIDO ou não localizado.";
-            document.getElementById('codigoGerado').innerText = "❌";
+            document.getElementById('mensagemFinal').innerText = "Erro: Pagamento não localizado.";
+            document.getElementById('codigoGerado').innerText = "INVÁLIDO ❌";
         }
+    }
+
+    function voltarParaMenu() {
+        document.getElementById('resultadoFinal').classList.add('hidden');
+        document.getElementById('conteudoSite').classList.remove('hidden');
     }
 </script>
 </body>

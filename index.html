@@ -3,63 +3,78 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Painel de Resgate</title>
+    <title>Painel de Resgate Premium</title>
     <style>
         :root { --primary: #6366f1; --bg: #0f172a; --card: #1e293b; --text: #f1f5f9; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); padding: 20px; }
-        .container { max-width: 450px; margin: auto; }
-        .card { background: var(--card); padding: 25px; border-radius: 20px; box-shadow: 0 10px 15px rgba(0,0,0,0.3); margin-top: 20px; }
-        input, select, button { width: 100%; padding: 14px; margin-top: 15px; border-radius: 12px; border: none; font-size: 16px; box-sizing: border-box; }
-        button { background-color: var(--primary); color: white; font-weight: bold; cursor: pointer; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background-color: var(--bg); 
+            color: var(--text); 
+            margin: 0; 
+            min-height: 100vh; 
+            display: flex; 
+            flex-direction: column; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 20px; 
+        }
+        .logo { margin-bottom: 20px; text-align: center; }
+        .logo h1 { margin: 0; color: #fff; letter-spacing: 2px; }
+        .logo p { margin: 5px 0; color: #94a3b8; font-size: 0.9em; }
+        .container { width: 100%; max-width: 400px; }
+        .card { background: var(--card); padding: 30px; border-radius: 25px; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.3); }
+        input, select, button { width: 100%; padding: 15px; margin-top: 15px; border-radius: 15px; border: none; font-size: 16px; box-sizing: border-box; background: #334155; color: white; }
+        button { background-color: var(--primary); font-weight: bold; cursor: pointer; transition: 0.3s; }
+        button:hover { filter: brightness(1.2); }
         .hidden { display: none; }
-        .code-box { font-size: 20px; font-weight: bold; color: #fbbf24; background: #334155; padding: 15px; border-radius: 10px; margin: 20px 0; text-align: center; border: 1px dashed #fbbf24; }
+        .code-box { font-size: 22px; font-weight: bold; color: #fbbf24; background: #0f172a; padding: 20px; border-radius: 15px; margin: 20px 0; text-align: center; border: 2px dashed #fbbf24; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <!-- Login -->
-    <div id="telaLogin" class="card">
-        <h2>Acesso ao Painel</h2>
-        <input type="text" id="usuarioInput" placeholder="Usuário">
-        <input type="password" id="senhaInput" placeholder="Senha">
-        <button onclick="verificarLogin()">Entrar</button>
+    <div class="logo">
+        <h1>GIFT PRO</h1>
+        <p>Sistema de Resgate Autorizado</p>
     </div>
 
-    <!-- Conteúdo -->
-    <div id="conteudoSite" class="card hidden">
-        <h2>Selecione o Serviço</h2>
-        <select id="servico">
-            <option>iFood</option><option>Google Play</option><option>Roblox</option>
-            <option>Shopee</option><option>Amazon</option><option>PayPal</option>
-        </select>
-        <input type="number" id="valor" placeholder="Valor (R$ 50 - R$ 1000)" oninput="calcular()">
-        <p>Total a pagar (75%): <b>R$ <span id="precoFinal">0,00</span></b></p>
-        <button onclick="mostrarPix()">Gerar Pagamento</button>
-    </div>
+    <div class="container">
+        <div id="telaLogin" class="card">
+            <h2>Acesso Restrito</h2>
+            <input type="text" id="usuarioInput" placeholder="Usuário">
+            <input type="password" id="senhaInput" placeholder="Senha">
+            <button onclick="verificarLogin()">Entrar</button>
+        </div>
 
-    <!-- Pix -->
-    <div id="pixArea" class="card hidden">
-        <p>Chave Pix para pagamento:</p>
-        <code style="display:block; background:#334155; padding:10px; border-radius:5px; word-break: break-all;">0144f837-fb94-4565-ac32-c80f139af4e2</code>
-        <button onclick="abrirConfirmacao()" style="background:#059669">Já paguei, liberar Gift</button>
-    </div>
+        <div id="conteudoSite" class="card hidden">
+            <h2 style="margin-top:0">Selecione o Serviço</h2>
+            <select id="servico">
+                <option>iFood</option><option>Google Play</option><option>Roblox</option>
+                <option>Shopee</option><option>Amazon</option><option>PayPal</option>
+            </select>
+            <input type="number" id="valor" placeholder="Valor (R$ 50 - R$ 1000)" oninput="calcular()">
+            <p>Total (75%): <b>R$ <span id="precoFinal">0,00</span></b></p>
+            <button onclick="mostrarPix()">Gerar Pagamento</button>
+        </div>
 
-    <!-- Confirmação -->
-    <div id="confirmarArea" class="card hidden">
-        <input type="number" id="valorPago" placeholder="Valor pago">
-        <input type="password" id="senhaLiberacao" placeholder="Senha de Liberação">
-        <button onclick="liberarCodigo()">Validar Pagamento</button>
-    </div>
+        <div id="pixArea" class="card hidden">
+            <p>Chave Pix:</p>
+            <code style="display:block; background:#0f172a; padding:15px; border-radius:10px; word-break: break-all; margin: 10px 0;">0144f837-fb94-4565-ac32-c80f139af4e2</code>
+            <button onclick="abrirConfirmacao()" style="background:#059669">Já fiz o pagamento</button>
+        </div>
 
-    <!-- Resultado -->
-    <div id="resultadoFinal" class="card hidden">
-        <h2 id="tituloRes">Resultado</h2>
-        <div id="codigoGerado" class="code-box"></div>
-        <button id="btnCopiar" onclick="copiarCodigo()" style="background:#10b981">Copiar Código</button>
-        <button onclick="location.reload()">Nova Compra</button>
+        <div id="confirmarArea" class="card hidden">
+            <input type="number" id="valorPago" placeholder="Valor pago">
+            <input type="password" id="senhaLiberacao" placeholder="Senha de Liberação">
+            <button onclick="liberarCodigo()">Confirmar Liberação</button>
+        </div>
+
+        <div id="resultadoFinal" class="card hidden">
+            <h2 id="tituloRes">Resultado</h2>
+            <div id="codigoGerado" class="code-box"></div>
+            <button id="btnCopiar" onclick="copiarCodigo()" style="background:#10b981">Copiar Código</button>
+            <button onclick="location.reload()">Nova Compra</button>
+        </div>
     </div>
-</div>
 
 <script>
     function verificarLogin() {
@@ -86,14 +101,10 @@
         document.getElementById('resultadoFinal').classList.remove('hidden');
 
         if (vPago === vEsp && sDigitada === "keven12") {
-            // Gera um código de 15 caracteres (formato: XXXX-XXXX-XXXXX)
-            var parte1 = Math.random().toString(36).substr(2, 4).toUpperCase();
-            var parte2 = Math.random().toString(36).substr(2, 4).toUpperCase();
-            var parte3 = Math.random().toString(36).substr(2, 5).toUpperCase();
-            var cod = parte1 + '-' + parte2 + '-' + parte3;
-            
-            document.getElementById('tituloRes').innerText = "Gift Card Liberado!";
-            document.getElementById('codigoGerado').innerText = cod;
+            var p1 = Math.random().toString(36).substr(2, 4).toUpperCase();
+            var p2 = Math.random().toString(36).substr(2, 4).toUpperCase();
+            var p3 = Math.random().toString(36).substr(2, 5).toUpperCase();
+            document.getElementById('codigoGerado').innerText = p1 + '-' + p2 + '-' + p3;
         } else {
             document.getElementById('tituloRes').innerText = "Erro";
             document.getElementById('btnCopiar').classList.add('hidden');
@@ -102,8 +113,7 @@
     }
 
     function copiarCodigo() {
-        var cod = document.getElementById("codigoGerado").innerText;
-        navigator.clipboard.writeText(cod);
+        navigator.clipboard.writeText(document.getElementById("codigoGerado").innerText);
         alert("Código copiado!");
     }
 </script>

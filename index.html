@@ -3,14 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gift Cards - Validador</title>
+    <title>Gift Cards - Área do Cliente</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background-color: #f4f4f4; }
         .card { background: white; padding: 20px; border-radius: 10px; max-width: 400px; margin: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
         input, button, select { width: 100%; padding: 12px; margin-top: 10px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
         button { background-color: #007bff; color: white; cursor: pointer; border: none; }
         #conteudoSite, #confirmarArea, #resultadoFinal { display: none; }
-        .pix-box { margin-top: 20px; padding: 15px; background: #e9ecef; border: 2px dashed #28a745; }
+        .ver-senha { text-align: left; font-size: 14px; margin-top: 5px; cursor: pointer; }
+        .pix-box { margin-top: 20px; padding: 15px; background: #e9ecef; border: 2px dashed #28a745; display: none; }
+        .btn-copiar { background-color: #28a745; margin-top: 10px; }
     </style>
 </head>
 <body>
@@ -19,18 +21,25 @@
     <h2>Login Obrigatório</h2>
     <input type="text" id="usuarioInput" placeholder="Usuário">
     <input type="password" id="senhaInput" placeholder="Senha">
+    <div class="ver-senha"><input type="checkbox" onclick="toggleSenha('senhaInput')"> Mostrar senha</div>
     <button onclick="verificarLogin()">Entrar</button>
 </div>
 
 <div id="conteudoSite" class="card">
     <h1>Gift Cards</h1>
-    <select id="servico"><option>iFood</option><option>Play Store</option><option>Roblox</option></select>
-    <input type="number" id="valor" placeholder="Valor (50 a 1000)" oninput="calcular()">
-    <p>Total a pagar: <b>R$ <span id="precoFinal">0,00</span></b></p>
+    <label>Serviço:</label>
+    <select id="servico"><option>iFood</option><option>Play Store</option><option>Roblox</option><option>Shopee</option></select>
+    
+    <label>Valor do saldo (R$ 50 a R$ 1000):</label>
+    <input type="number" id="valor" min="50" max="1000" placeholder="Ex: 100" oninput="calcular()">
+    <p>Total a pagar (75%): <b>R$ <span id="precoFinal">0,00</span></b></p>
+    
     <button onclick="mostrarPix()">Gerar Pagamento</button>
 
-    <div id="pixArea" class="pix-box" style="display:none;">
-        <p>Chave: <code>3d998e47-86c4-4e63-9591-9d8ac218b56a</code></p>
+    <div id="pixArea" class="pix-box">
+        <p>Use a chave abaixo para pagar:</p>
+        <code id="chavePix" style="font-weight:bold; word-break: break-all;">3d998e47-86c4-4e63-9591-9d8ac218b56a</code>
+        <button class="btn-copiar" onclick="copiarChave()">Copiar Chave Pix</button>
         <button onclick="abrirConfirmacao()">Já paguei, quero meu código</button>
     </div>
 </div>
@@ -39,6 +48,7 @@
     <h2>Confirmar Pagamento</h2>
     <input type="number" id="valorPago" placeholder="Confirme o valor pago">
     <input type="password" id="senhaLiberacao" placeholder="Senha de Liberação">
+    <div class="ver-senha"><input type="checkbox" onclick="toggleSenha('senhaLiberacao')"> Mostrar senha</div>
     <button onclick="liberarCodigo()">Verificar e Receber</button>
 </div>
 
@@ -50,22 +60,35 @@
 </div>
 
 <script>
-    // SENHA DE LIBERAÇÃO ATUALIZADA PARA: keven12
     const senhaPagamento = "keven12";
+
+    // Função universal para ver senha
+    function toggleSenha(id) {
+        var x = document.getElementById(id);
+        x.type = (x.type === "password") ? "text" : "password";
+    }
 
     function verificarLogin() {
         if (document.getElementById('usuarioInput').value === "keven12" && document.getElementById('senhaInput').value === "140124") {
             document.getElementById('telaLogin').style.display = 'none';
             document.getElementById('conteudoSite').style.display = 'block';
-        } else { alert("Dados incorretos!"); }
+        } else { alert("Usuário ou senha incorretos!"); }
     }
 
     function calcular() {
-        var v = document.getElementById('valor').value;
+        var input = document.getElementById('valor');
+        var v = parseFloat(input.value);
+        if (v > 1000) { v = 1000; input.value = 1000; }
         document.getElementById('precoFinal').innerText = v >= 50 ? (v * 0.75).toFixed(2).replace('.', ',') : "0,00";
     }
 
     function mostrarPix() { document.getElementById('pixArea').style.display = 'block'; }
+
+    function copiarChave() {
+        navigator.clipboard.writeText(document.getElementById("chavePix").innerText);
+        alert("Chave copiada!");
+    }
+
     function abrirConfirmacao() { 
         document.getElementById('conteudoSite').style.display = 'none'; 
         document.getElementById('confirmarArea').style.display = 'block'; 

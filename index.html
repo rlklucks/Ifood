@@ -3,64 +3,76 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gift Cards - Pagamento Direto</title>
+    <title>Acesso Restrito</title>
     <style>
         body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background-color: #f4f4f4; }
         .card { background: white; padding: 20px; border-radius: 10px; max-width: 400px; margin: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
-        h1 { color: #333; }
-        select, input, button { width: 100%; padding: 12px; margin-top: 15px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px; box-sizing: border-box; }
-        button { background-color: #007bff; color: white; font-weight: bold; cursor: pointer; border: none; }
+        input, button { width: 100%; padding: 12px; margin-top: 15px; border-radius: 5px; border: 1px solid #ccc; box-sizing: border-box; }
+        button { background-color: #007bff; color: white; cursor: pointer; border: none; }
+        #conteudoSite { display: none; }
     </style>
 </head>
 <body>
 
-<div class="card">
+<div id="telaLogin" class="card">
+    <h2>Login Obrigatório</h2>
+    <input type="text" id="usuarioInput" placeholder="Usuário">
+    <input type="password" id="senhaInput" placeholder="Senha">
+    <button onclick="verificarLogin()">Entrar</button>
+</div>
+
+<div id="conteudoSite" class="card">
     <h1>Gift Cards</h1>
-    
     <label>Serviço:</label>
     <select id="servico">
         <option value="iFood">iFood</option>
         <option value="Play Store">Google Play Store</option>
         <option value="Roblox">Roblox</option>
         <option value="Shopee">Shopee</option>
+        <option value="Amazon">Amazon</option>
+        <option value="PayPal">PayPal</option>
     </select>
 
-    <label>Valor do saldo (R$):</label>
-    <input type="number" id="valor" placeholder="Ex: 50" oninput="atualizarLink()">
+    <label>Valor do saldo (até R$ 1000):</label>
+    <input type="number" id="valor" max="1000" placeholder="Ex: 500" oninput="calcular()">
     
     <p>Total a pagar (75%): <b>R$ <span id="precoFinal">0,00</span></b></p>
     
-    <button id="btnPagar" onclick="pagar()" disabled>Insira um valor válido</button>
+    <button onclick="gerarPagamento()">Gerar Pagamento</button>
+
+    <div id="pixArea" style="display:none; margin-top:20px; padding:15px; background:#e9ecef; border:2px dashed #28a745;">
+        <p>Use a chave abaixo para pagar:</p>
+        <code id="chavePix" style="font-weight:bold; word-break: break-all;">3d998e47-86c4-4e63-9591-9d8ac218b56a</code>
+    </div>
 </div>
 
 <script>
-    // AQUI VOCÊ COLA SEUS LINKS.
-    // O valor à esquerda é o valor que a pessoa digita (saldo).
-    const linksPagamento = {
-        "50": "https://mercadopago.com/link-do-valor-37-50",
-        "100": "https://mercadopago.com/link-do-valor-75-00",
-        "200": "https://mercadopago.com/link-do-valor-150-00"
-    };
+    function verificarLogin() {
+        var user = document.getElementById('usuarioInput').value;
+        var pass = document.getElementById('senhaInput').value;
 
-    function atualizarLink() {
-        var valor = document.getElementById('valor').value;
-        var preco = valor * 0.75;
-        var btn = document.getElementById('btnPagar');
-
-        if (linksPagamento[valor]) {
-            document.getElementById('precoFinal').innerText = preco.toFixed(2).replace('.', ',');
-            btn.innerText = "Ir para Pagamento R$ " + preco.toFixed(2).replace('.', ',');
-            btn.disabled = false;
+        if (user === "keven12" && pass === "140124") {
+            document.getElementById('telaLogin').style.display = 'none';
+            document.getElementById('conteudoSite').style.display = 'block';
         } else {
-            document.getElementById('precoFinal').innerText = "0,00";
-            btn.innerText = "Valor indisponível";
-            btn.disabled = true;
+            alert("Usuário ou senha incorretos!");
         }
     }
 
-    function pagar() {
+    function calcular() {
         var valor = document.getElementById('valor').value;
-        window.location.href = linksPagamento[valor];
+        if (valor > 1000) { valor = 1000; document.getElementById('valor').value = 1000; }
+        var preco = valor * 0.75;
+        document.getElementById('precoFinal').innerText = valor ? preco.toFixed(2).replace('.', ',') : "0,00";
+    }
+
+    function gerarPagamento() {
+        var total = document.getElementById('precoFinal').innerText;
+        if (total === "0,00") {
+            alert("Por favor, insira um valor válido.");
+        } else {
+            document.getElementById('pixArea').style.display = 'block';
+        }
     }
 </script>
 

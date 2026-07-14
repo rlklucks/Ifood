@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gift Cards - Pagamento Direto</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 20px; background-color: #f4f4f4; }
+        .card { background: white; padding: 20px; border-radius: 10px; max-width: 400px; margin: auto; box-shadow: 0 2px 10px rgba(0,0,0,0.1); }
+        h1 { color: #333; }
+        select, input, button { width: 100%; padding: 12px; margin-top: 15px; border-radius: 5px; border: 1px solid #ccc; font-size: 16px; box-sizing: border-box; }
+        button { background-color: #007bff; color: white; font-weight: bold; cursor: pointer; border: none; }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <h1>Gift Cards</h1>
+    
+    <label>Serviço:</label>
+    <select id="servico">
+        <option value="iFood">iFood</option>
+        <option value="Play Store">Google Play Store</option>
+        <option value="Roblox">Roblox</option>
+        <option value="Shopee">Shopee</option>
+    </select>
+
+    <label>Valor do saldo (R$):</label>
+    <input type="number" id="valor" placeholder="Ex: 50" oninput="atualizarLink()">
+    
+    <p>Total a pagar (75%): <b>R$ <span id="precoFinal">0,00</span></b></p>
+    
+    <button id="btnPagar" onclick="pagar()" disabled>Insira um valor válido</button>
+</div>
+
+<script>
+    // AQUI VOCÊ COLA SEUS LINKS.
+    // O valor à esquerda é o valor que a pessoa digita (saldo).
+    const linksPagamento = {
+        "50": "https://mercadopago.com/link-do-valor-37-50",
+        "100": "https://mercadopago.com/link-do-valor-75-00",
+        "200": "https://mercadopago.com/link-do-valor-150-00"
+    };
+
+    function atualizarLink() {
+        var valor = document.getElementById('valor').value;
+        var preco = valor * 0.75;
+        var btn = document.getElementById('btnPagar');
+
+        if (linksPagamento[valor]) {
+            document.getElementById('precoFinal').innerText = preco.toFixed(2).replace('.', ',');
+            btn.innerText = "Ir para Pagamento R$ " + preco.toFixed(2).replace('.', ',');
+            btn.disabled = false;
+        } else {
+            document.getElementById('precoFinal').innerText = "0,00";
+            btn.innerText = "Valor indisponível";
+            btn.disabled = true;
+        }
+    }
+
+    function pagar() {
+        var valor = document.getElementById('valor').value;
+        window.location.href = linksPagamento[valor];
+    }
+</script>
+
+</body>
+</html>

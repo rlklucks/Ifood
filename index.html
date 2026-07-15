@@ -32,9 +32,13 @@
         </div>
 
         <div id="screen-servicos" class="screen hidden">
-            <h2>Serviços</h2>
-            <select id="servico"><option>iFood</option><option>Google Play</option><option>Roblox</option></select>
+            <h2>Selecione o Serviço</h2>
+            <select id="servico">
+                <option>iFood</option><option>Google Play</option><option>Roblox</option>
+                <option>Shopee</option><option>Amazon</option><option>PayPal</option>
+            </select>
             <input type="number" id="valor" placeholder="Valor (R$)" oninput="calc()">
+            <p style="text-align: center; font-weight: bold;">Total: R$ <span id="precoFinal">0.00</span></p>
             <button onclick="mudarTela('screen-pix')">Gerar Pagamento</button>
             <button class="btn-voltar" onclick="mudarTela('screen-login')">Voltar</button>
         </div>
@@ -61,7 +65,7 @@
             
             <h3>Confirmar Código</h3>
             <input type="text" id="inputConfirmacao" placeholder="Cole seu código aqui">
-            <button style="background:#10b981" onclick="confirmarCodigo()">Confirmar Código</button>
+            <button style="background:#10b981" onclick="confirmarCodigo()">Validar Código</button>
             
             <textarea id="comentario" placeholder="Deixe um comentário"></textarea>
             <button onclick="salvarAvaliacao()">Enviar Avaliação</button>
@@ -82,15 +86,8 @@
 <script>
     let ultimoCodigo = "";
 
-    function toggleSenha(id) {
-        let x = document.getElementById(id);
-        x.type = (x.type === "password") ? "text" : "password";
-    }
-
-    function mudarTela(id) {
-        document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
-        document.getElementById(id).classList.remove('hidden');
-    }
+    function toggleSenha(id) { let x = document.getElementById(id); x.type = (x.type === "password") ? "text" : "password"; }
+    function mudarTela(id) { document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
 
     function fazerLogin() {
         if(document.getElementById('usuarioInput').value === "keven12" && document.getElementById('senhaInput').value === "140124") {
@@ -115,11 +112,8 @@
 
     function confirmarCodigo() {
         let digitado = document.getElementById('inputConfirmacao').value.toUpperCase();
-        if(digitado === ultimoCodigo && ultimoCodigo !== "") {
-            alert("Código validado com sucesso!");
-        } else {
-            alert("Código inválido ou ainda não gerado.");
-        }
+        if(digitado === ultimoCodigo && ultimoCodigo !== "") { alert("Código confirmado com sucesso!"); } 
+        else { alert("Código inválido!"); }
     }
 
     function salvarAvaliacao() {
@@ -127,6 +121,7 @@
         div.className = 'msg-salva';
         div.innerHTML = `<b>Avaliação:</b> ${document.getElementById('comentario').value}`;
         document.getElementById('historico').appendChild(div);
+        alert("Avaliação enviada!");
     }
 
     function enviarSuporte() {
@@ -136,6 +131,7 @@
         div.innerHTML = `<b>${document.getElementById('nomeSuporte').value}:</b> ${document.getElementById('msgSuporte').value}`;
         document.getElementById('historico').appendChild(div);
         mudarTela('screen-resultado');
+        alert("Mensagem enviada!");
     }
 </script>
 </body>

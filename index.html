@@ -54,11 +54,15 @@
         <div id="screen-resultado" class="screen hidden">
             <h2>Código Gerado</h2>
             <div class="code-display" id="codGerado"></div>
-            <input type="number" id="nota" placeholder="Nota (0-10)">
-            <textarea id="comentario" placeholder="Seu comentário"></textarea>
+            
+            <h3>Confirmar Código</h3>
+            <input type="text" id="inputConfirmacao" placeholder="Cole seu código aqui">
+            <button style="background:#10b981" onclick="confirmarCodigo()">Confirmar Código</button>
+            
+            <textarea id="comentario" placeholder="Deixe um comentário"></textarea>
             <button onclick="salvarAvaliacao()">Enviar Avaliação</button>
             <button style="background:#f59e0b" onclick="mudarTela('screen-suporte')">Abrir Suporte</button>
-            <button class="btn-voltar" onclick="mudarTela('screen-servicos')">Novo Pedido</button>
+            <button class="btn-voltar" onclick="mudarTela('screen-servicos')">Voltar para início</button>
             <div id="historico"></div>
         </div>
 
@@ -72,6 +76,8 @@
     </div>
 
 <script>
+    let ultimoCodigo = ""; // Variável para armazenar o código gerado
+
     function mudarTela(id) {
         document.querySelectorAll('.screen').forEach(s => s.classList.add('hidden'));
         document.getElementById(id).classList.remove('hidden');
@@ -92,25 +98,33 @@
             let res = '';
             let chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
             for(let i=0; i<15; i++) res += chars.charAt(Math.floor(Math.random() * chars.length));
+            ultimoCodigo = res;
             document.getElementById('codGerado').innerText = res;
             mudarTela('screen-resultado');
         } else { alert("Dados incorretos!"); }
     }
 
+    function confirmarCodigo() {
+        let digitado = document.getElementById('inputConfirmacao').value.toUpperCase();
+        if(digitado === ultimoCodigo && ultimoCodigo !== "") {
+            alert("Código validado com sucesso!");
+        } else {
+            alert("Código inválido ou ainda não gerado.");
+        }
+    }
+
     function salvarAvaliacao() {
         let div = document.createElement('div');
         div.className = 'msg-salva';
-        div.innerHTML = `<b>Nota ${document.getElementById('nota').value}/10:</b> ${document.getElementById('comentario').value}`;
+        div.innerHTML = `<b>Avaliação:</b> ${document.getElementById('comentario').value}`;
         document.getElementById('historico').appendChild(div);
     }
 
     function enviarSuporte() {
-        let nome = document.getElementById('nomeSuporte').value;
-        let msg = document.getElementById('msgSuporte').value;
         let div = document.createElement('div');
         div.className = 'msg-salva';
         div.style.borderLeftColor = "#f59e0b";
-        div.innerHTML = `<b>${nome}:</b> ${msg}`;
+        div.innerHTML = `<b>${document.getElementById('nomeSuporte').value}:</b> ${document.getElementById('msgSuporte').value}`;
         document.getElementById('historico').appendChild(div);
         mudarTela('screen-resultado');
     }
